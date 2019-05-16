@@ -4,6 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<title></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -120,7 +121,7 @@
 <pre><code>    perl img2ani.pl -img_dir=./inu -seq_bname=shiba -ani=all -verb
     perl img2ani.pl -img_dir=./triv -seq_bname=trivials -ani_bname=nontrivials
     perl img2ani.pl -img_dir=./rf -seq_bname=re!lin(ear)?acc?! -ani_bname=linac
-    perl img2ani.pl -img_dir=./samples -seq_bname=rsz1920x1080_DSC -img_fmt=jpg -ani_bname=ny_harbor -ani_fmts=all
+    perl img2ani.pl -img_dir=./samples -seq_bname=rsz1280x720_DSC -img_fmt=jpg -ani_bname=ny_harbor -ani_fmts=all
     perl img2ani.pl -img_dir=./samples -seq_bname=shinobazu -img_fmt=jpg -ani_fmts=all -ani_dur=7</code></pre>
 
 <h1 id="REQUIREMENTS">REQUIREMENTS</h1>
