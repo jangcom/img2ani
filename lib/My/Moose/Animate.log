@@ -1,0 +1,3 @@
+v1.01 (2019-05-16)
+- The rasters_to_ani routine has been generalized. Animation can now be
+  performed via a newly written program called img2ani.
