@@ -31,7 +31,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>    perl img2ani.pl [-img_dir=directory [-seq_bname=string | re!&lt;regex&gt;!]
+<pre><code>    perl img2ani.pl [-img_dir=directory] [-seq_bname=string | re!&lt;regex&gt;!]
                     [-img_fmt=format] [-ani_bname=string] [-ani_fmts=format ...]
                     [-ani_dur=int] [-kbps=int] [-crf=int]
                     [-verbose] [-nofm] [-nopause]</code></pre>
