@@ -12,8 +12,8 @@ use namespace::autoclean;
 use feature qw(say);
 
 our $PACKNAME = __PACKAGE__;
-our $VERSION  = '1.01';
-our $LAST     = '2019-05-16';
+our $VERSION  = '1.02';
+our $LAST     = '2019-05-18';
 our $FIRST    = '2018-08-19';
 
 has 'Cmt' => (
@@ -106,13 +106,15 @@ sub rasters_to_anims {
     #   Use img2ani for animating raster images.
     #
     
-    my $self          = shift;
-    my @raster_dirs   = @{$_[0]}; # Arg 1: aref containing raster directories
-    my $raster_format = $_[1];    # Arg 2: A raster format, e.g. 'png', 'jpg'
+    my $self = shift;
+    # Arg 1: an aref containing raster directories
+    # > phitar:  aref containing multiple subdirectories
+    # > img2ani: aref containing one directory
+    my @raster_dirs = @{$_[0]};
+    # Arg 2: a scalar containing the raster format to be animated
+    # > 'png', 'jpg'
+    my $raster_format = $_[1];
     $raster_format =~ s/jpeg/jpg/i;
-    
-    my @to_be_anim; # Storage for rasters
-    my $fps;        # For frame per second
     
     # Graphics resolutions for YUV420p
     # > When used with the -vf scale=<xres:yres> command-line
@@ -314,7 +316,7 @@ sub rasters_to_anims {
     #
     foreach my $dir (@raster_dirs) {
         next unless -d $dir;
-        $dir =~ s/[\\\/]+$//; # Path delim will be added where appropriate.
+        $dir =~ s/[\\\/]+$//; # Path delim will be added later.
         
         #
         # When a raster-containing subdirectory has been visited,
@@ -395,10 +397,10 @@ sub rasters_to_anims {
             say $self->Cmt->borders->{'-'};
         }
         
-        # (ii) img2ani-called
-        # > Fixed:    a string (shiba)
-        # > Variable: sequential strings (001, 002, ...)
-        push @{$self->anim_flags}, $self->FileIO->seq_bname;
+        # (ii) Called by other than phitar (e.g. img2ani)
+        # > Fixed:    a string (e.g. shiba)
+        # > Variable: sequential strings (e.g. 001, 002, ...)
+        else { push @{$self->anim_flags}, $self->FileIO->seq_bname }
         
         #
         # Iterate over the collected filename flags.
@@ -408,7 +410,7 @@ sub rasters_to_anims {
             say "  Flag of interest: [$flag]";
             
             # Buffer the rasters to be animated.
-            @to_be_anim = (); # Initialization
+            my @to_be_anim; # Initialization
             my $is_first_raster = 1;
             opendir my $dir_dh, $dir or die "Unable to open $dir: $!";
             foreach my $raster (sort readdir $dir_dh) {
@@ -418,28 +420,40 @@ sub rasters_to_anims {
                     # ani_bname for img2ani-called
                     # > Look up "ani_bname for phitar-called"
                     if (
-                        not $is_phitar
+                        not $is_phitar #<--Important hook
                         and $is_first_raster
                         and not $self->FileIO->ani_bname
                     ) {
                         $self->FileIO->set_ani_bname($&); # The matched part
                         $is_first_raster = 0;
                     }
-                    push @to_be_anim,
-                        $dir.$self->FileIO->path_delim.$raster; # Full path!
+                    
+                    # Fill in a storage with to-be-animated rasters.
+                    # > Store the rasters including their paths.
+                    # > The 'next' command below is necessary not to animate
+                    #   fname.png and fname_trn.png together, which can be
+                    #   generated from the convert routine of Image.pm.
+                    #   Use this hook for phitar.
+                    next if $is_phitar and not $raster =~ /$flag[.]/i;
+                    push @to_be_anim, sprintf(
+                        "%s%s%s",
+                        $dir,
+                        $self->FileIO->path_delim,
+                        $raster,
+                    );
                 }
             }
             close $dir_dh;
             
-            # Exit if no raster is available.
+            # Exit the routine if no raster file is available.
             if (not $to_be_anim[0]) {
                 print "\n  No [$raster_format] file found; terminating.\n";
                 return;
             }
             
             #
-            # Determine the video resolution based on
-            # the pixel size of the first raster image.
+            # Determine the video resolution based on the pixel size of
+            # the "first" raster out of the rasters in queue.
             #
             
             # Fetch the pixel size using the identify executable of ImageMagick.
@@ -485,7 +499,7 @@ sub rasters_to_anims {
             
             # Show the frame information identified and
             # its effects on the animation settings.
-            $fps = (
+            my $fps = (
                 $self->Ctrls->duration
                 * $self->delay
                 * $self->sec_per_frame

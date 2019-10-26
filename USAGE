@@ -2,7 +2,7 @@ NAME
     img2ani - Animate raster images
 
 SYNOPSIS
-        perl img2ani.pl [-img_dir=directory [-seq_bname=string | re!<regex>!]
+        perl img2ani.pl [-img_dir=directory] [-seq_bname=string | re!<regex>!]
                         [-img_fmt=format] [-ani_bname=string] [-ani_fmts=format ...]
                         [-ani_dur=int] [-kbps=int] [-crf=int]
                         [-verbose] [-nofm] [-nopause]
