@@ -1,0 +1,22 @@
+# github archive
+github/
+
+# img2ani records
+bak_img2ani.pl/
+img2ani_baker.bat
+
+# img2ani sample files
+samples/saved_from.txt
+samples/*.gif
+samples/*.avi
+samples/*.mp4
+
+# MSWin link files
+*.lnk
+
+# POD-related
+img2ani_usage.bat
+img2ani.html
+pod2htmd.tmp
+img2ani_pod2html.bat
+samples/saved_from.txt
